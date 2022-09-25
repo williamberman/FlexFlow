@@ -30,8 +30,8 @@ jobs:
       # TODO(will) - Cache this
       - name: Install cudnn
         run: |
-           wget https://developer.download.nvidia.com/compute/redist/cudnn/v8.5.0/local_installers/11.7/cudnn-linux-x86_64-8.5.0.96_cuda11-archive.tar.xz
-           tar -xzvf cudnn-linux-x86_64-8.5.0.96_cuda11-archive.tar.xz -C /usr/local
+           wget -q https://developer.download.nvidia.com/compute/redist/cudnn/v8.5.0/local_installers/11.7/cudnn-linux-x86_64-8.5.0.96_cuda11-archive.tar.xz
+           tar -xf cudnn-linux-x86_64-8.5.0.96_cuda11-archive.tar.xz -C /usr/local
            rm cudnn-linux-x86_64-8.5.0.96_cuda11-archive.tar.xz
            # TODO remove this
            ls /usr/local/cud*
