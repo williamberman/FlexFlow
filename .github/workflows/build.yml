@@ -24,6 +24,7 @@ jobs:
       - name: Install python deps
         run: pip install -r requirements.txt
 
+      # TODO add some docs on this taking a while
       - name: Install cuda
         uses: Jimver/cuda-toolkit@v0.2.8
 
@@ -33,8 +34,6 @@ jobs:
            wget -q https://developer.download.nvidia.com/compute/redist/cudnn/v8.5.0/local_installers/11.7/cudnn-linux-x86_64-8.5.0.96_cuda11-archive.tar.xz
            sudo tar -xf cudnn-linux-x86_64-8.5.0.96_cuda11-archive.tar.xz -C /usr/local
            rm cudnn-linux-x86_64-8.5.0.96_cuda11-archive.tar.xz
-           # TODO remove this
-           ls /usr/local/cud*
 
       - name: Install cmake
         uses: jwlawson/actions-setup-cmake@v1.12
@@ -43,6 +42,7 @@ jobs:
       - name: Build
         env:
           CUDA_DIR: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}
+          CUDNN_DIR: /usr/local/cudnn-linux-x86_64-8.5.0.96_cuda11-archive
         run: |
           mkdir build
           cd build
