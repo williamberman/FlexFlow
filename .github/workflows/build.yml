@@ -40,9 +40,9 @@ jobs:
 
       # TODO(will) - Cache this
       - name: Build
-        # env:
+        env:
+          CUDNN_DIR: /usr/local/cudnn-linux-x86_64-8.5.0.96_cuda11-archive
         #   CUDA_DIR: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}
-        #   CUDNN_DIR: /usr/local/cudnn-linux-x86_64-8.5.0.96_cuda11-archive
         run: |
           mkdir build
           cd build
