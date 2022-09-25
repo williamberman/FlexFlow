@@ -15,16 +15,33 @@ jobs:
       - uses: actions/checkout@v3
         submodules: recursive
 
-      - uses: conda-incubator/setup-miniconda@v2
+      - name: Install conda
+        uses: conda-incubator/setup-miniconda@v2
         with:
           python-version: 3.9
 
       - name: Install python deps
         run: pip install -r requirements.txt
 
-      - uses: jwlawson/actions-setup-cmake@v1.12
+      - name: Install cuda
+        uses: Jimver/cuda-toolkit@v0.2.8
 
+      # TODO(will) - Cache this
+      - name: Install cudnn
+        run: |
+           wget https://developer.download.nvidia.com/compute/redist/cudnn/v8.5.0/local_installers/11.7/cudnn-linux-x86_64-8.5.0.96_cuda11-archive.tar.xz
+           tar -xzvf cudnn-linux-x86_64-8.5.0.96_cuda11-archive.tar.xz -C /usr/local
+           rm cudnn-linux-x86_64-8.5.0.96_cuda11-archive.tar.xz
+           # TODO remove this
+           ls /usr/local/cud*
+
+      - name: Install cmake
+        uses: jwlawson/actions-setup-cmake@v1.12
+
+      # TODO(will) - Cache this
       - name: Build
+        env:
+          CUDA_DIR: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}
         run: |
           mkdir build
           cd build
