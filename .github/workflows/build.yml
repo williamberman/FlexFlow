@@ -9,7 +9,7 @@ jobs:
         # Conda needs a login shell to activate the conda environment
         shell: bash -l {0}
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v3
@@ -24,9 +24,12 @@ jobs:
       - name: Install python deps
         run: pip install -r requirements.txt
 
-      # TODO add some docs on this taking a while
       - name: Install cuda
-        uses: Jimver/cuda-toolkit@v0.2.8
+        run: |
+          wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
+          sudo dpkg -i cuda-keyring_1.0-1_all.deb
+          sudo apt-get update
+          sudo apt-get -y install cuda
 
       # TODO(will) - Cache this
       - name: Install cudnn
