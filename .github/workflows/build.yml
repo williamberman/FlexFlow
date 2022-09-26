@@ -16,6 +16,8 @@ jobs:
         with:
           submodules: recursive
 
+      - run: ls -alh deps/nccl
+
       - name: Install conda
         uses: conda-incubator/setup-miniconda@v2
         with:
