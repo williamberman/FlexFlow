@@ -4,6 +4,10 @@ on: [push, pull_request]
 
 jobs:
   Build:
+    defaults:
+      run:
+        # Conda needs a login shell to activate the conda environment
+        shell: bash -l {0}
 
     runs-on: ubuntu-latest
     container: nvidia/cuda:11.7.1-cudnn8-devel-ubuntu22.04
