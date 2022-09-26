@@ -5,23 +5,23 @@ on: [push, pull_request]
 jobs:
   Build:
 
-  runs-on: ubuntu-latest
-  container: nvidia/cuda:11.7.1-cudnn8-devel-ubuntu22.04
+    runs-on: ubuntu-latest
+    container: nvidia/cuda:11.7.1-cudnn8-devel-ubuntu22.04
 
-  steps:
-    - shell: |
-        whoami
-        pwd
-        ls -alh
-        ls -alh /usr/include
+    steps:
+      - shell: |
+          whoami
+          pwd
+          ls -alh
+          ls -alh /usr/include
 
-    - uses: actions/checkout@v3
-      with:
-        submodules: recursive
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
 
-    - shell: |
-        whoami
-        pwd
-        ls -alh
-        ls -alh /usr/include
+      - shell: |
+          whoami
+          pwd
+          ls -alh
+          ls -alh /usr/include
       
