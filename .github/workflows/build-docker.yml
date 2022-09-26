@@ -10,18 +10,18 @@ jobs:
 
   steps:
     - shell: |
-      whoami
-      pwd
-      ls -alh
-      ls -alh /usr/include
+        whoami
+        pwd
+        ls -alh
+        ls -alh /usr/include
 
     - uses: actions/checkout@v3
       with:
         submodules: recursive
 
     - shell: |
-      whoami
-      pwd
-      ls -alh
-      ls -alh /usr/include
+        whoami
+        pwd
+        ls -alh
+        ls -alh /usr/include
       
