@@ -14,10 +14,10 @@ jobs:
           apt-get -y update
           apt-get install -y git
 
-      - name: Install conda
-        uses: conda-incubator/setup-miniconda@v2
-        with:
-          python-version: 3.9
+      # - name: Install conda
+      #   uses: conda-incubator/setup-miniconda@v2
+      #   with:
+      #     python-version: 3.9
 
       - name: Install cmake
         uses: jwlawson/actions-setup-cmake@v1.12
