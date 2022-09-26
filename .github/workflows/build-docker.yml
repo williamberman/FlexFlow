@@ -9,7 +9,7 @@ jobs:
     container: nvidia/cuda:11.7.1-cudnn8-devel-ubuntu22.04
 
     steps:
-      - shell: |
+      - run: |
           whoami
           pwd
           ls -alh
@@ -19,7 +19,7 @@ jobs:
         with:
           submodules: recursive
 
-      - shell: |
+      - run: |
           whoami
           pwd
           ls -alh
