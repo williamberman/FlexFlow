@@ -9,11 +9,18 @@ jobs:
     container: nvidia/cuda:11.7.1-cudnn8-devel-ubuntu22.04
 
     steps:
-      - run: |
-          whoami
-          pwd
-          ls -alh
-          ls -alh /usr/include
+      - name: Install git
+        run: |
+          apt-get -y update
+          apt-get install -y git
+
+      - name: Install conda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: 3.9
+
+      - name: Install cmake
+        uses: jwlawson/actions-setup-cmake@v1.12
 
       - uses: actions/checkout@v3
         with:
@@ -23,5 +30,7 @@ jobs:
           whoami
           pwd
           ls -alh
-          ls -alh /usr/include
+
+      - name: Install python deps
+        run: pip install -r requirements.txt
       
