@@ -22,7 +22,8 @@ RUN apt-get update -q && \
         openssh-client \
         procps \
         subversion \
-        wget && \
+        wget \
+        zlib1g-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -79,9 +80,10 @@ RUN set -x && \
     find ${CONDA_INSTAL_DIR}/conda/ -follow -type f -name '*.js.map' -delete && \
     ${CONDA_INSTAL_DIR}/conda/bin/conda clean -afy && \
     conda create -n FlexFlow python=3.10 && \
+    echo "conda activate FlexFlow" >> ~/.bashrc && \
     conda activate FlexFlow && \
     pip install -r requirements.txt && \
-    echo "conda activate FlexFlow" >> ~/.bashrc
+    rm requirements.txt
 
 FROM python-deps as source
 
@@ -105,23 +107,9 @@ COPY FlexFlow.mk ./FlexFlow.mk
 
 RUN mkdir build
 
-USER root
-
-RUN apt-get update -q
-RUN apt-get install -q -y --no-install-recommends zlib1g-dev
-
-USER ${BUILDER_USER}
-
-RUN . ${CONDA_INSTAL_DIR}/conda/etc/profile.d/conda.sh && conda activate FlexFlow && which cmake
-
-RUN set -x && \
-    . ${CONDA_INSTAL_DIR}/conda/etc/profile.d/conda.sh && \
-    conda activate FlexFlow && which conda && \
-    cd build && \
-    ../config/config.linux
-
 # RUN set -x && \
-#     mkdir build && \
+#     . ${CONDA_INSTAL_DIR}/conda/etc/profile.d/conda.sh && \
+#     conda activate FlexFlow && which conda && \
 #     cd build && \
 #     ../config/config.linux && \
 #     make
