@@ -82,3 +82,46 @@ RUN set -x && \
     conda activate FlexFlow && \
     pip install -r requirements.txt && \
     echo "conda activate FlexFlow" >> ~/.bashrc
+
+FROM python-deps as source
+
+ARG FLEX_FLOW_DIR=/home/${BUILDER_USER}/FlexFlow
+RUN mkdir ${FLEX_FLOW_DIR}
+WORKDIR ${FLEX_FLOW_DIR}
+
+COPY cmake ./cmake
+COPY ./config ./config
+COPY ./deps ./deps
+COPY ./docs ./docs
+COPY ./examples ./examples
+COPY ./include ./include
+COPY ./nmt ./nmt
+COPY ./python ./python
+COPY ./src ./src
+COPY ./substitutions ./substitutions
+COPY ./tests ./tests
+COPY CMakeLists.txt ./CMakeLists.txt
+COPY FlexFlow.mk ./FlexFlow.mk
+
+RUN mkdir build
+
+USER root
+
+RUN apt-get update -q
+RUN apt-get install -q -y --no-install-recommends zlib1g-dev
+
+USER ${BUILDER_USER}
+
+RUN . ${CONDA_INSTAL_DIR}/conda/etc/profile.d/conda.sh && conda activate FlexFlow && which cmake
+
+RUN set -x && \
+    . ${CONDA_INSTAL_DIR}/conda/etc/profile.d/conda.sh && \
+    conda activate FlexFlow && which conda && \
+    cd build && \
+    ../config/config.linux
+
+# RUN set -x && \
+#     mkdir build && \
+#     cd build && \
+#     ../config/config.linux && \
+#     make
