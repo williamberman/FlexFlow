@@ -1,0 +1,84 @@
+FROM nvidia/cuda:11.7.1-cudnn8-devel-ubuntu22.04 as cuda-deps
+
+# This dockerfile builds a container that has the build dependencies for FlexFlow.
+# The build image is commited into the github container registry. If build dependencies change, 
+# it can be rebuilt manually via the ci job <x>.
+
+# FlexFlow's build depends on the CUDA toolkit and the cuDNN library (with development headers).
+# Nvidia provides a container with the CUDA toolket and cuDNN + headers preinstalled.
+
+FROM cuda-deps as system-deps
+
+RUN apt-get update -q && \
+    apt-get install -q -y --no-install-recommends \
+        bzip2 \
+        ca-certificates \
+        git \
+        libglib2.0-0 \
+        libsm6 \
+        libxext6 \
+        libxrender1 \
+        mercurial \
+        openssh-client \
+        procps \
+        subversion \
+        wget && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+FROM system-deps as builder-user
+
+# Create a builder user to avoid building as root
+
+ARG BUILDER_USER=builder
+RUN adduser --disabled-password --gecos "" ${BUILDER_USER}
+USER ${BUILDER_USER}
+WORKDIR /home/${BUILDER_USER}
+
+FROM builder-user as python-deps
+
+# FlexFlow has python dependencies in `./requirements.txt`
+# Install python from conda to isolate from system python dependencies
+
+# Adapted from
+# https://github.com/ContinuumIO/docker-images/blob/4a041ffeb5c74d1a600002b498e64d48d09be157/miniconda3/debian/Dockerfile#L27-L58
+# with changes for installing for a single non-root user
+
+# Leave these args here to better use the Docker build cache
+ARG CONDA_VERSION=py39_4.12.0
+ARG CONDA_INSTAL_DIR="/home/${BUILDER_USER}/opt"
+
+COPY requirements.txt .
+
+ENV PATH ${CONDA_INSTAL_DIR}/conda/bin:$PATH
+
+RUN set -x && \
+    UNAME_M="$(uname -m)" && \
+    if [ "${UNAME_M}" = "x86_64" ]; then \
+        MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh"; \
+        SHA256SUM="78f39f9bae971ec1ae7969f0516017f2413f17796670f7040725dd83fcff5689"; \
+    elif [ "${UNAME_M}" = "s390x" ]; then \
+        MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-s390x.sh"; \
+        SHA256SUM="ff6fdad3068ab5b15939c6f422ac329fa005d56ee0876c985e22e622d930e424"; \
+    elif [ "${UNAME_M}" = "aarch64" ]; then \
+        MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-aarch64.sh"; \
+        SHA256SUM="5f4f865812101fdc747cea5b820806f678bb50fe0a61f19dc8aa369c52c4e513"; \
+    elif [ "${UNAME_M}" = "ppc64le" ]; then \
+        MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-ppc64le.sh"; \
+        SHA256SUM="1fe3305d0ccc9e55b336b051ae12d82f33af408af4b560625674fa7ad915102b"; \
+    fi && \
+    wget "${MINICONDA_URL}" -O miniconda.sh -q && \
+    echo "${SHA256SUM} miniconda.sh" > shasum && \
+    if [ "${CONDA_VERSION}" != "latest" ]; then sha256sum --check --status shasum; fi && \
+    mkdir -p ${CONDA_INSTAL_DIR} && \
+    sh miniconda.sh -b -p ${CONDA_INSTAL_DIR}/conda && \
+    rm miniconda.sh shasum && \
+    echo ". ${CONDA_INSTAL_DIR}/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    . ${CONDA_INSTAL_DIR}/conda/etc/profile.d/conda.sh && \
+    find ${CONDA_INSTAL_DIR}/conda/ -follow -type f -name '*.a' -delete && \
+    find ${CONDA_INSTAL_DIR}/conda/ -follow -type f -name '*.js.map' -delete && \
+    ${CONDA_INSTAL_DIR}/conda/bin/conda clean -afy && \
+    conda create -n FlexFlow python=3.10 && \
+    conda activate FlexFlow && \
+    pip install -r requirements.txt && \
+    echo "conda activate FlexFlow" >> ~/.bashrc
