@@ -16,37 +16,37 @@ echo " Defaults for Linux machine"
 #INSTALL_DIR=
 
 # set build type
-BUILD_TYPE=${BUILD_TYPE:=Release}
+BUILD_TYPE=Release
 
 # set CUDA Arch, replace xx with your GPU architecture
 #FF_CUDA_ARCH=xx
 
 # set CUDNN dir in case cmake cannot autodetect a path
-CUDNN_DIR=${CUDNN_DIR:=/usr/local/cuda}
+CUDNN_DIR=/usr/local/cuda
 
 # set CUDA dir in case cmake cannot autodetect a path
-CUDA_DIR=${CUDA_DIR:=/usr/local/cuda}
+CUDA_DIR=/usr/local/cuda
 
 # enable Python
-FF_USE_PYTHON=${FF_USE_PYTHON:=ON}
+FF_USE_PYTHON=ON
 
 # enable NCCL
-FF_USE_NCCL=${FF_USE_NCCL:=ON}
+FF_USE_NCCL=ON
 
 # enable GASNet
-FF_USE_GASNET=${FF_USE_GASNET:=OFF}
+FF_USE_GASNET=OFF
 
 # select GASNET conduit
-FF_GASNET_CONDUIT=${FF_GASNET_CONDUIT:=ibv}
+FF_GASNET_CONDUIT=ibv
 
 # build C++ examples
-FF_BUILD_ALL_EXAMPLES=${FF_BUILD_ALL_EXAMPLES:=OFF}
+FF_BUILD_ALL_EXAMPLES=OFF
 
 # enable avx2
-FF_USE_AVX2=${FF_USE_AVX2:=OFF}
+FF_USE_AVX2=OFF
 
 # set MAX_DIM
-FF_MAX_DIM=${FF_MAX_DIM:=5}
+FF_MAX_DIM=5
 
 . $(dirname $0)/config.inc
 run_cmake $*
