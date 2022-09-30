@@ -105,11 +105,11 @@ COPY ./tests ./tests
 COPY CMakeLists.txt ./CMakeLists.txt
 COPY FlexFlow.mk ./FlexFlow.mk
 
-RUN mkdir build
-
-# RUN set -x && \
-#     . ${CONDA_INSTAL_DIR}/conda/etc/profile.d/conda.sh && \
-#     conda activate FlexFlow && which conda && \
-#     cd build && \
-#     ../config/config.linux && \
-#     make
+# TODO(will) - Document CUDA_LIB_PATH
+RUN set -x && \
+    . ${CONDA_INSTAL_DIR}/conda/etc/profile.d/conda.sh && \
+    conda activate FlexFlow && which conda && \
+    mkdir build && \
+    cd build && \
+    CUDA_LIB_PATH=/usr/local/cuda/lib64/stubs ../config/config.linux && \
+    make
