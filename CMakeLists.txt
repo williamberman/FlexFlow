@@ -207,6 +207,8 @@ elseif (FF_GPU_BACKEND STREQUAL "hip_cuda")
   # TODO hip
 elseif (FF_GPU_BACKEND STREQUAL "hip_rocm")
   # TODO hip
+  list(APPEND CMAKE_PREFIX_PATH /opt/rocm/hip /opt/rocm)
+  find_package(hip REQUIRED)
 elseif (FF_GPU_BACKEND STREQUAL "intel")
   # TODO what is the intel gpu backend?
 else()
