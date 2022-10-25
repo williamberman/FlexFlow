@@ -213,6 +213,8 @@ elseif (FF_GPU_BACKEND STREQUAL "hip_rocm")
   # TODO hip
   # https://rocmdocs.amd.com/en/latest/Installation_Guide/Using-CMake-with-AMD-ROCm.html
   list(APPEND CMAKE_PREFIX_PATH /opt/rocm/hip /opt/rocm)
+  list(APPEND FLEXFLOW_INCLUDE_DIRS /opt/rocm/include)
+
   find_package(hip REQUIRED)
   if(BUILD_SHARED_LIBS)
     add_library(flexflow SHARED ${FLEXFLOW_HIP_GPU_SRC} ${FLEXFLOW_SRC})
