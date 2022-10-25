@@ -213,7 +213,7 @@ elseif (FF_GPU_BACKEND STREQUAL "hip_rocm")
   # TODO hip
   # https://rocmdocs.amd.com/en/latest/Installation_Guide/Using-CMake-with-AMD-ROCm.html
   list(APPEND CMAKE_PREFIX_PATH /opt/rocm/hip /opt/rocm)
-  # list(APPEND FLEXFLOW_INCLUDE_DIRS /opt/rocm/include)
+  list(APPEND FLEXFLOW_INCLUDE_DIRS /opt/rocm/include)
 
   find_package(hip REQUIRED)
   find_package(miopen REQUIRED)
