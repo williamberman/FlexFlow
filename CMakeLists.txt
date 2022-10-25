@@ -126,6 +126,7 @@ elseif (FF_GPU_BACKEND STREQUAL "hip_cuda")
   list(APPEND FF_HIPCC_FLAGS
     -DFF_USE_HIP_CUDA)
 elseif (FF_GPU_BACKEND STREQUAL "hip_rocm")
+  # NOTE(HERE) - hip_rocm, FF_GPU_BACKEND
   list(APPEND FF_CC_FLAGS
     -DFF_USE_HIP_ROCM)
   list(APPEND FF_HIPCC_FLAGS
@@ -179,6 +180,7 @@ file(GLOB_RECURSE FLEXFLOW_SRC
   ${FLEXFLOW_ROOT}/src/*.cc)
 list(REMOVE_ITEM FLEXFLOW_SRC "${FLEXFLOW_ROOT}/src/runtime/cpp_driver.cc")
 
+# NOTE(HERE) FLEXFLOW_GPU_SRC
 file(GLOB_RECURSE FLEXFLOW_GPU_SRC
   LIST_DIRECTORIES False
   ${FLEXFLOW_ROOT}/src/*.cu)
@@ -195,10 +197,19 @@ target_link_libraries(substitution_loader nlohmann_json::nlohmann_json)
 #message("FLEXFLOW_INCLUDE_DIRS: ${FLEXFLOW_INCLUDE_DIRS}")
 
 # compile flexflow lib
-if(BUILD_SHARED_LIBS)
-  cuda_add_library(flexflow SHARED ${FLEXFLOW_GPU_SRC} ${FLEXFLOW_SRC} OPTIONS ${CUDA_GENCODE})
+if (FF_GPU_BACKEND STREQUAL "cuda")
+  if(BUILD_SHARED_LIBS)
+    cuda_add_library(flexflow SHARED ${FLEXFLOW_GPU_SRC} ${FLEXFLOW_SRC} OPTIONS ${CUDA_GENCODE})
+  else()
+    cuda_add_library(flexflow STATIC ${FLEXFLOW_GPU_SRC} ${FLEXFLOW_SRC} OPTIONS ${CUDA_GENCODE})
+  endif()
+elseif (FF_GPU_BACKEND STREQUAL "hip_cuda")
+  # TODO hip
+elseif (FF_GPU_BACKEND STREQUAL "hip_rocm")
+  # TODO hip
+elseif (FF_GPU_BACKEND STREQUAL "intel")
+  # TODO what is the intel gpu backend?
 else()
-  cuda_add_library(flexflow STATIC ${FLEXFLOW_GPU_SRC} ${FLEXFLOW_SRC} OPTIONS ${CUDA_GENCODE})
 endif()
 
 target_include_directories(flexflow PUBLIC ${FLEXFLOW_INCLUDE_DIRS})
