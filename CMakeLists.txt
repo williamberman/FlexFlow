@@ -185,6 +185,10 @@ file(GLOB_RECURSE FLEXFLOW_GPU_SRC
   LIST_DIRECTORIES False
   ${FLEXFLOW_ROOT}/src/*.cu)
 
+file(GLOB_RECURSE FLEXFLOW_HIP_GPU_SRC
+  LIST_DIRECTORIES False
+  ${FLEXFLOW_ROOT}/src/*.cpp)
+
 set(FLEXFLOW_CPP_DRV_SRC
   ${FLEXFLOW_ROOT}/src/runtime/cpp_driver.cc)
 
@@ -207,8 +211,15 @@ elseif (FF_GPU_BACKEND STREQUAL "hip_cuda")
   # TODO hip
 elseif (FF_GPU_BACKEND STREQUAL "hip_rocm")
   # TODO hip
+  # https://rocmdocs.amd.com/en/latest/Installation_Guide/Using-CMake-with-AMD-ROCm.html
   list(APPEND CMAKE_PREFIX_PATH /opt/rocm/hip /opt/rocm)
   find_package(hip REQUIRED)
+  if(BUILD_SHARED_LIBS)
+    add_library(flexflow SHARED ${FLEXFLOW_HIP_GPU_SRC} ${FLEXFLOW_SRC})
+  else()
+    add_library(flexflow STATIC ${FLEXFLOW_HIP_GPU_SRC} ${FLEXFLOW_SRC})
+  endif()
+  target_link_libraries(flexflow hip::host)
 elseif (FF_GPU_BACKEND STREQUAL "intel")
   # TODO what is the intel gpu backend?
 else()
