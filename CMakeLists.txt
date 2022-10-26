@@ -128,9 +128,9 @@ elseif (FF_GPU_BACKEND STREQUAL "hip_cuda")
 elseif (FF_GPU_BACKEND STREQUAL "hip_rocm")
   # NOTE(HERE) - hip_rocm, FF_GPU_BACKEND
   list(APPEND FF_CC_FLAGS
-    -DFF_USE_HIP_ROCM)
+    -DFF_USE_HIP_ROCM -D__HIP_PLATFORM_AMD__)
   list(APPEND FF_HIPCC_FLAGS
-    -DFF_USE_HIP_ROCM)
+    -DFF_USE_HIP_ROCM -D__HIP_PLATFORM_AMD__)
 else()
 endif()
 
