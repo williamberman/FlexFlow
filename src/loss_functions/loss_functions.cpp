@@ -16,7 +16,6 @@
 #include "flexflow/model.h"
 #include "flexflow/utils/hip_helper.h"
 #include <hip/hip_runtime.h>
-#include <hip/hip_runtime_api.h>
 
 namespace FlexFlow {
 
