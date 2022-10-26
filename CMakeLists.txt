@@ -122,9 +122,9 @@ if (FF_GPU_BACKEND STREQUAL "cuda")
     -DFF_USE_CUDA)
 elseif (FF_GPU_BACKEND STREQUAL "hip_cuda")
   list(APPEND FF_CC_FLAGS
-    -DFF_USE_HIP_CUDA)
+    -DFF_USE_HIP_CUDA -D__HIP_PLATFORM_NVIDIA__)
   list(APPEND FF_HIPCC_FLAGS
-    -DFF_USE_HIP_CUDA)
+    -DFF_USE_HIP_CUDA -D__HIP_PLATFORM_NVIDIA__)
 elseif (FF_GPU_BACKEND STREQUAL "hip_rocm")
   # NOTE(HERE) - hip_rocm, FF_GPU_BACKEND
   list(APPEND FF_CC_FLAGS
@@ -208,9 +208,21 @@ if (FF_GPU_BACKEND STREQUAL "cuda")
     cuda_add_library(flexflow STATIC ${FLEXFLOW_GPU_SRC} ${FLEXFLOW_SRC} OPTIONS ${CUDA_GENCODE})
   endif()
 elseif (FF_GPU_BACKEND STREQUAL "hip_cuda")
-  # TODO hip
+  # https://rocmdocs.amd.com/en/latest/Installation_Guide/Using-CMake-with-AMD-ROCm.html
+  list(APPEND CMAKE_PREFIX_PATH /opt/rocm/hip /opt/rocm)
+  # list(APPEND FLEXFLOW_INCLUDE_DIRS /opt/rocm/include/miopen)
+
+  find_package(hip REQUIRED)
+  find_package(miopen REQUIRED)
+
+  if(BUILD_SHARED_LIBS)
+    add_library(flexflow SHARED ${FLEXFLOW_HIP_GPU_SRC} ${FLEXFLOW_SRC})
+  else()
+    add_library(flexflow STATIC ${FLEXFLOW_HIP_GPU_SRC} ${FLEXFLOW_SRC})
+  endif()
+
+  target_link_libraries(flexflow hip::host MIOpen)
 elseif (FF_GPU_BACKEND STREQUAL "hip_rocm")
-  # TODO hip
   # https://rocmdocs.amd.com/en/latest/Installation_Guide/Using-CMake-with-AMD-ROCm.html
   list(APPEND CMAKE_PREFIX_PATH /opt/rocm/hip /opt/rocm)
   # list(APPEND FLEXFLOW_INCLUDE_DIRS /opt/rocm/include/miopen)
